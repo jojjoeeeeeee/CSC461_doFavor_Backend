@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
 
 mongoose
-  .connect(`${process.env.DB_HOST}`)
+  .connect(`${process.env.DB_HOST}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  })
   .then(() => console.log('DB Connected!'));
 
 mongoose.connection.on('connected', () => {

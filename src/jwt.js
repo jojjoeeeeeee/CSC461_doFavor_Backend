@@ -6,7 +6,7 @@ var privateKEY = fs.readFileSync(path.join(__dirname + '/private.key'), 'utf8');
 
 var i = 'Cosci'; // Issuer (Software organization who issues the token)
 var s = 'phakkharachate.jon@gmail.com'; // Subject (intended user of the token)
-var a = `${process.env.SERVER_HOST}:${process.env.SERVER_PORT}`; // Audience (Domain within which this token will live and function)
+var a = `${process.env.LOCAL_SERVER_HOST}:${process.env.LOCAL_SERVER_PORT}`; // Audience (Domain within which this token will live and function)
 
 module.exports = {
   sign: (payload, expiresIn) => {
