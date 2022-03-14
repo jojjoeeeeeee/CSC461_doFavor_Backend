@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+console.log("TEST",process.env.DB_HOST)
 mongoose
   .connect(`${process.env.DB_HOST}`, {
     useNewUrlParser: true,
