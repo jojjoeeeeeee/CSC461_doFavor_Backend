@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+var publicKEY = fs.readFileSync(path.join(__dirname + '/public.key'), 'utf8');
+console.log(`publicKEY${publicKEY}`)
 
 mongoose
   .connect('mongodb+srv://jojjoeeeeeee:RgNWZfaPWBTslUea@cluster0.aun5d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
