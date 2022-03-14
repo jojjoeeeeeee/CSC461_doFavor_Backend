@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 
-console.log("TEST",process.env.DB_HOST)
 mongoose
-  .connect(`${process.env.DB_HOST}`, {
+  .connect('mongodb+srv://jojjoeeeeeee:RgNWZfaPWBTslUea@cluster0.aun5d.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {
     useNewUrlParser: true,
     useUnifiedTopology: true
   })
