@@ -3,7 +3,7 @@ const router = express.Router();
 require('../db');
 
 
-router.get('/', (req,res) => {
+router.get('/test', (req,res) => {
     res.send("HELLOWORLD HEROKU")
 })
 // router.use('/auth', require('../routes/auth'));
