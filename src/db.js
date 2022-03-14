@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 var publicKEY = fs.readFileSync(path.join(__dirname + '/public.key'), 'utf8');
 console.log(`publicKEY${publicKEY}`)
 
