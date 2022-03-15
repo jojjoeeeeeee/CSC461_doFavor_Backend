@@ -1,7 +1,7 @@
-# CSC461_SWUMAN_Backend
+# CSC461_doFavor_Backend
 **SWU CSC461 Mobile Application Development Project "doFavor" backend**
 
-_Final project COSCI Computer For Communicaton 2021 SWUMAN Application (API repository)_
+_Final project COSCI Computer For Communicaton 2021 doFavor Application (API repository)_
 
 **Member :**
 |Name|Student Id|
