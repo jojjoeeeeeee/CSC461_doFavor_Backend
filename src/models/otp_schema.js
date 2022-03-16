@@ -8,4 +8,4 @@ const schema = mongoose.Schema({
 });
 
 schema.index({ email: 1}, { unique: true });
-module.exports = mongoose.model('users', schema)
+module.exports = mongoose.model('otps', schema)
