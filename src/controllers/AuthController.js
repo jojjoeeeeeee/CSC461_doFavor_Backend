@@ -1,0 +1,112 @@
+const Users = require('../models/user_schema');
+const bcrypt = require('bcryptjs');
+const Files = require('../models/file_schema');
+const Otps = require('../models/otp_schema');
+
+const { generateOtpcode } = require('../services/utilities');
+
+const { loginValidation, registerValidation } = require('../services/validation');
+const gswu_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@g.swu.ac.th$/
+
+exports.register = async (req,res) => {
+    const { error } = registerValidation(req.body);
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+
+    if (!gswu_regex.test(req.body.email)) return res.status(200).json({result: 'nOK', message: 'Please use g.swu.ac.th email domain'});
+
+    const usernameExist = await Users.findOne({username: req.body.username});
+    if (usernameExist) return res.status(200).json({result: 'nOK', message: 'Username already exists'});
+
+    const emailExist = await Users.findOne({email: req.body.email});
+    if (emailExist) return res.status(200).json({result: 'nOK', message: 'Email already exists'});
+
+    try {
+        req.body.password = await bcrypt.hash(req.body.password, 8);
+        const data = await Users.create(req.body);
+        const userSchema = {
+            username: data.username,
+            email: data.email,
+            profile_pic: '',
+            name: data.name,
+            state: data.state,
+            device_id: device_id
+            //if device_id ไม่ตรงกับใน db ตอน request ให้ขึ้น session expire แล้ว logout
+        }
+
+        const profile_pic = await Files.findById(data.profile_pic);
+        userSchema.profile_pic = profile_pic.file_path
+
+        const minutesToAdd = 15;
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+        
+        const OTP_Schema = {
+            email: data.email,
+            otp: generateOtpcode(),
+            expired: futureDate,
+        }
+
+        const otp = await Otps.create(OTP_Schema);
+        //send verify email
+
+        res.status(200).json({result: 'OK', message: 'success create account please verify account by email in 15 minutes', data: userSchema});
+    } catch (e) {
+        res.status(500).json({result: 'Internal Server Error', message: ''});
+    }
+};
+
+exports.verify = async (req,res) => {
+
+};
+
+exports.login = async (req,res) => {
+    const { error } = loginValidation(req.body);
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+
+    try {
+        const { username, password, device_id } = req.body;
+
+        const data = await Users.findOne(({$or: [
+            {username: username},
+            {email: username}
+        ]}));
+      
+        if (data) {
+            const isPasswordValid = await bcrypt.compare(password, data.password);
+            if (isPasswordValid) {
+
+                const userSchema = {
+                    username: data.username,
+                    email: data.email,
+                    profile_pic: '',
+                    name: data.name,
+                    state: data.state,
+                    device_id: device_id
+                    //if device_id ไม่ตรงกับใน db ตอน request ให้ขึ้น session expire แล้ว logout
+                }
+
+                const profile_pic = await Files.findById(data.profile_pic);
+                userSchema.profile_pic = profile_pic.file_path
+
+                if (data.state === 'none') {
+                    //send verify email
+                    return res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
+                }
+                else if (data.state === 'ban') return res.status(200).json({ result: 'nOK', message: 'banned account', data: userSchema});
+
+                if (device_id !== data.device_id) {
+                    data.device_id = device_id
+                    await Users.findByIdAndUpdate(data._id, data);
+                }
+
+                res.status(200).json({ result: 'OK', message: 'success sign in', data: userSchema });
+            } else {
+                res.status(200).json({ result: 'nOK', message: 'invalid username or password' });
+            }
+        } else {
+            res.status(200).json({ result: 'nOK', message: 'invalid username or password' });
+        }
+    } catch (e) {
+        res.status(500).json({result: 'Internal Server Error', message: ''});
+    }
+};
