@@ -25,6 +25,7 @@ exports.register = async (req,res) => {
 
     try {
         req.body.password = await bcrypt.hash(req.body.password, 8);
+        req.body.state = 'none'
         const data = await Users.create(req.body);
         const userSchema = {
             username: data.username,
