@@ -113,9 +113,9 @@ exports.verify = async (req,res) => {
 
         if (device_id !== user_data.device_id) {
             user_data.device_id = device_id
-            await Users.findByIdAndUpdate(user_data._id, user_data);
         }
 
+        await Users.findByIdAndUpdate(user_data._id, user_data);
         await Otps.findByIdAndDelete(data._id);
         res.status(200).json({ result: 'OK', message: 'success sign in', data: userSchema });
 
