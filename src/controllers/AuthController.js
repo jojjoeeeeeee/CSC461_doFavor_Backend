@@ -125,6 +125,48 @@ exports.verify = async (req,res) => {
 
 };
 
+exports.verifyResendCode = async (req,res) => {
+    const { error } = verifyValidation(req.body);
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+
+    try {
+        const { email } = req.body;
+
+        const data = await Otps.findOne({email: email});
+        if(!data) return res.status(404).json({result: 'Not found', message: ''});
+
+        const user_data = await Users.findOne({email: email});
+        if(!user_data) return res.status(404).json({result: 'Not found', message: ''});
+
+        const userSchema = {
+            username: user_data.username,
+            email: user_data.email,
+            profile_pic: '',
+            name: user_data.name,
+            state: user_data.state,
+            device_id: user_data.device_id
+        }
+
+        const minutesToAdd = 15;
+        const currentDate = new Date();
+        const futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
+
+        const OTP_Schema = {
+            email: user_data.email,
+            otp: generateOtpcode(),
+            expired: futureDate,
+        }
+
+        await Otps.findOneAndUpdate({email: user_data.email}, OTP_Schema);
+
+        mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
+        res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
+
+    } catch (e) {
+        res.status(500).json({result: 'Internal Server Error', message: ''});
+    }
+};
+
 exports.login = async (req,res) => {
     const { error } = loginValidation(req.body);
     if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
