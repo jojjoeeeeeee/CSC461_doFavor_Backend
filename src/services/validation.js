@@ -49,6 +49,8 @@ const verifyValidation = data => {
                         .email()
                         .required(),
                 otp: Joi.string().regex(/^[0-9]{6}$/)
+                        .required(),
+                device_id: Joi.string()
                         .required()
         });
         return schema.validate(data);

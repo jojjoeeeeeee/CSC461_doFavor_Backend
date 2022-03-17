@@ -26,6 +26,11 @@ exports.register = async (req,res) => {
     try {
         req.body.password = await bcrypt.hash(req.body.password, 8);
         req.body.state = 'none'
+
+        if (req.body.profile_pic === '') {
+            req.body.profile_pic = '6233b48434353cf2996e71eb' //Default image
+        }
+
         const data = await Users.create(req.body);
         const userSchema = {
             username: data.username,
@@ -65,7 +70,7 @@ exports.verify = async (req,res) => {
     if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
 
     try {
-        const { email, otp } = req.body;
+        const { email, otp, device_id } = req.body;
 
         const data = await Otps.findOne({email: email});
         if(!data) return res.status(404).json({result: 'Not found', message: ''});
@@ -110,7 +115,7 @@ exports.verify = async (req,res) => {
             user_data.device_id = device_id
             await Users.findByIdAndUpdate(user_data._id, user_data);
         }
-        
+
         await Otps.findByIdAndDelete(data._id);
         res.status(200).json({ result: 'OK', message: 'success sign in', data: userSchema });
 
