@@ -87,6 +87,8 @@ exports.verify = async (req,res) => {
         const profile_pic = await Files.findById(user_data.profile_pic);
         userSchema.profile_pic = profile_pic.file_path
 
+        if(otp !== data.otp) return res.status(200).json({result: 'nOK', message: 'otp code not the same'});
+
         if(moment().isAfter(data.expired)) {
             const minutesToAdd = 15;
             const currentDate = new Date();
@@ -103,8 +105,6 @@ exports.verify = async (req,res) => {
             mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
             return res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
         }
-
-        if(otp !== data.otp) return res.status(200),json({result: 'nOK', message: 'otp code not the same'});
 
         await Otps.findByIdAndDelete(data._id);
 
