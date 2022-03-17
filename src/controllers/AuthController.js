@@ -78,6 +78,15 @@ exports.verify = async (req,res) => {
         const user_data = await Users.findOne({email: email});
         if(!user_data) return res.status(404).json({result: 'Not found', message: ''});
 
+        const userSchema = {
+            username: user_data.username,
+            email: user_data.email,
+            profile_pic: '',
+            name: user_data.name,
+            state: user_data.state,
+            device_id: user_data.device_id
+        }
+
         if(otp !== data.otp) return res.status(200).json({result: 'nOK', message: 'otp code not the same'});
 
         if(moment().isAfter(data.expired)) {
@@ -98,15 +107,6 @@ exports.verify = async (req,res) => {
         }
 
         user_data.state = 'verify'
-
-        const userSchema = {
-            username: user_data.username,
-            email: user_data.email,
-            profile_pic: '',
-            name: user_data.name,
-            state: user_data.state,
-            device_id: user_data.device_id
-        }
 
         const profile_pic = await Files.findById(user_data.profile_pic);
         userSchema.profile_pic = profile_pic.file_path
