@@ -107,6 +107,7 @@ exports.verify = async (req,res) => {
         }
 
         user_data.state = 'verify'
+        userSchema.state = user_data.state
 
         const profile_pic = await Files.findById(user_data.profile_pic);
         userSchema.profile_pic = profile_pic.file_path
