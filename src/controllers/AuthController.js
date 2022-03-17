@@ -32,7 +32,7 @@ exports.register = async (req,res) => {
             profile_pic: '',
             name: data.name,
             state: data.state,
-            device_id: device_id
+            device_id: data.device_id
             //if device_id ไม่ตรงกับใน db ตอน request ให้ขึ้น session expire แล้ว logout
         }
 
@@ -42,7 +42,7 @@ exports.register = async (req,res) => {
         const minutesToAdd = 15;
         const currentDate = new Date();
         const futureDate = new Date(currentDate.getTime() + minutesToAdd*60000);
-        
+
         const OTP_Schema = {
             email: data.email,
             otp: generateOtpcode(),
@@ -80,7 +80,7 @@ exports.verify = async (req,res) => {
             profile_pic: '',
             name: user_data.name,
             state: user_data.state,
-            device_id: device_id
+            device_id: user_data.device_id
         }
 
         const profile_pic = await Files.findById(user_data.profile_pic);
