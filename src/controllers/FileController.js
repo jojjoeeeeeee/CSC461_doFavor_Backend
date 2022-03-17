@@ -60,7 +60,8 @@ exports.upload = async (req,res) => {
 };
 
 exports.uploadImage = async (req,res) => {
-    const user_id = req.userId
+    // const user_id = req.userId
+    const user_id = 'doFavorAdminId'
     const uploadImg = multer({storage: storageImg}).array('file');
 
     uploadImg( req, res, async (err) => {
