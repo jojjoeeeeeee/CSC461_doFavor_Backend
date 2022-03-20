@@ -31,7 +31,7 @@ const mailer = (to,subject,html) => {
         if (error) {
             return console.log(error.message);
         }
-        console.log(`success ${info}`)
+        console.log(`success send email`)
     });
 };
 

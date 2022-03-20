@@ -14,15 +14,15 @@ const gswu_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\
 
 exports.register = async (req,res) => {
     const { error } = registerValidation(req.body);
-    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message, data: {}});
 
-    if (!gswu_regex.test(req.body.email)) return res.status(200).json({result: 'nOK', message: 'Please use g.swu.ac.th email domain'});
+    if (!gswu_regex.test(req.body.email)) return res.status(200).json({result: 'nOK', message: 'Please use g.swu.ac.th email domain', data: {}});
 
     const usernameExist = await Users.findOne({username: req.body.username});
-    if (usernameExist) return res.status(200).json({result: 'nOK', message: 'Username already exists'});
+    if (usernameExist) return res.status(200).json({result: 'nOK', message: 'Username already exists', data: {}});
 
     const emailExist = await Users.findOne({email: req.body.email});
-    if (emailExist) return res.status(200).json({result: 'nOK', message: 'Email already exists'});
+    if (emailExist) return res.status(200).json({result: 'nOK', message: 'Email already exists', data: {}});
 
     try {
         req.body.password = await bcrypt.hash(req.body.password, 8);
@@ -62,22 +62,22 @@ exports.register = async (req,res) => {
 
         res.status(200).json({result: 'OK', message: 'success create account please verify account by email in 15 minutes', data: userSchema});
     } catch (e) {
-        res.status(500).json({result: 'Internal Server Error', message: ''});
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
 };
 
 exports.verify = async (req,res) => {
     const { error } = verifyValidation(req.body);
-    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message, data: {}});
 
     try {
         const { email, otp, device_id } = req.body;
 
         const data = await Otps.findOne({email: email});
-        if(!data) return res.status(404).json({result: 'Not found', message: ''});
+        if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
         const user_data = await Users.findOne({email: email});
-        if(!user_data) return res.status(404).json({result: 'Not found', message: ''});
+        if(!user_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
         const userSchema = {
             username: user_data.username,
@@ -88,7 +88,7 @@ exports.verify = async (req,res) => {
             device_id: device_id
         }
 
-        if(otp !== data.otp) return res.status(200).json({result: 'nOK', message: 'otp code not the same'});
+        if(otp !== data.otp) return res.status(200).json({result: 'nOK', message: 'otp code not the same', data: {}});
 
         if(moment().isAfter(data.expired)) {
             const minutesToAdd = 15;
@@ -126,23 +126,23 @@ exports.verify = async (req,res) => {
         res.status(200).header('Authorization', `Bearer ${token}`).json({ result: 'OK', message: 'success sign in', data: userSchema });
 
     } catch (e) {
-        res.status(500).json({result: 'Internal Server Error', message: ''});
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
 
 };
 
 exports.verifyResendCode = async (req,res) => {
     const { error } = verifyValidation(req.body);
-    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message, data: {}});
 
     try {
         const { email } = req.body;
 
         const data = await Otps.findOne({email: email});
-        if(!data) return res.status(404).json({result: 'Not found', message: ''});
+        if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
         const user_data = await Users.findOne({email: email});
-        if(!user_data) return res.status(404).json({result: 'Not found', message: ''});
+        if(!user_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
         const userSchema = {
             username: user_data.username,
@@ -169,13 +169,13 @@ exports.verifyResendCode = async (req,res) => {
         res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
 
     } catch (e) {
-        res.status(500).json({result: 'Internal Server Error', message: ''});
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
 };
 
 exports.login = async (req,res) => {
     const { error } = loginValidation(req.body);
-    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message});
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message, data: {}});
 
     try {
         const { username, password, device_id } = req.body;
@@ -235,12 +235,12 @@ exports.login = async (req,res) => {
 
                 res.status(200).header('Authorization', `Bearer ${token}`).json({ result: 'OK', message: 'success sign in', data: userSchema });
             } else {
-                res.status(200).json({ result: 'nOK', message: 'invalid username or password' });
+                res.status(200).json({ result: 'nOK', message: 'invalid username or password', data: {}});
             }
         } else {
-            res.status(200).json({ result: 'nOK', message: 'invalid username or password' });
+            res.status(200).json({ result: 'nOK', message: 'invalid username or password', data: {}});
         }
     } catch (e) {
-        res.status(500).json({result: 'Internal Server Error', message: ''});
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
 };
