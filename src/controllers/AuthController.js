@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const Files = require('../models/file_schema');
 const Otps = require('../models/otp_schema');
 
+const jwt = require('../jwt');
 const moment = require('moment');
 
 const { generateOtpcode, mailer } = require('../services/utilities');
@@ -84,7 +85,7 @@ exports.verify = async (req,res) => {
             profile_pic: '',
             name: user_data.name,
             state: user_data.state,
-            device_id: user_data.device_id
+            device_id: device_id
         }
 
         if(otp !== data.otp) return res.status(200).json({result: 'nOK', message: 'otp code not the same'});
@@ -112,13 +113,17 @@ exports.verify = async (req,res) => {
         const profile_pic = await Files.findById(user_data.profile_pic);
         userSchema.profile_pic = profile_pic.file_path
 
-        if (device_id !== user_data.device_id) {
-            user_data.device_id = device_id
-        }
-
         await Users.findByIdAndUpdate(user_data._id, user_data);
         await Otps.findByIdAndDelete(data._id);
-        res.status(200).json({ result: 'OK', message: 'success sign in', data: userSchema });
+
+        const payload = {
+            id: user_data._id,
+            device_id: device_id
+        };
+
+        const token = jwt.sign(payload);
+
+        res.status(200).header('Authorization', `Bearer ${token}`).json({ result: 'OK', message: 'success sign in', data: userSchema });
 
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: ''});
@@ -190,7 +195,7 @@ exports.login = async (req,res) => {
                     profile_pic: '',
                     name: data.name,
                     state: data.state,
-                    device_id: device_id
+                    device_id: data.device_id
                     //if device_id ไม่ตรงกับใน db ตอน request ให้ขึ้น session expire แล้ว logout
                 }
 
@@ -221,7 +226,14 @@ exports.login = async (req,res) => {
                     await Users.findByIdAndUpdate(data._id, data);
                 }
 
-                res.status(200).json({ result: 'OK', message: 'success sign in', data: userSchema });
+                const payload = {
+                    id: data._id,
+                    device_id: data.device_id
+                };
+
+                const token = jwt.sign(payload);
+
+                res.status(200).header('Authorization', `Bearer ${token}`).json({ result: 'OK', message: 'success sign in', data: userSchema });
             } else {
                 res.status(200).json({ result: 'nOK', message: 'invalid username or password' });
             }

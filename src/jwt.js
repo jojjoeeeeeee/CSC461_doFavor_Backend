@@ -9,13 +9,12 @@ var s = 'phakkharachate.jon@gmail.com'; // Subject (intended user of the token)
 var a = `https://swuhelp.herokuapp.com`; // Audience (Domain within which this token will live and function)
 
 module.exports = {
-  sign: (payload, expiresIn) => {
+  sign: (payload) => {
     // Token signing options
     var signOptions = {
       issuer: i,
       subject: s,
       audience: a,
-      expiresIn: expiresIn,
       algorithm: 'RS256',
     };
     return jwt.sign(payload, privateKEY, signOptions);
@@ -33,7 +32,6 @@ module.exports = {
       issuer: i,
       subject: s,
       audience: a,
-      expiresIn: '24h',
       algorithm: ['RS256'],
     };
 
@@ -50,6 +48,7 @@ module.exports = {
 
       // if everything good, save to request for use in other routes
       req.userId = decoded.id;
+      req.deviceId = decoded.device_id
       next();
     });
   },
