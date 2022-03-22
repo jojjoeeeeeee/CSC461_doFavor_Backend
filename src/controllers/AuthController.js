@@ -166,7 +166,7 @@ exports.verifyResendCode = async (req,res) => {
         await Otps.findOneAndUpdate({email: user_data.email}, OTP_Schema);
 
         // mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
-        res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
+        res.status(200).json({ result: 'OK', message: 'please verify account by email in 15 minutes', data: userSchema})
 
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
