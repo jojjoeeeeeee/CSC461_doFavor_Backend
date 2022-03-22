@@ -58,7 +58,7 @@ exports.register = async (req,res) => {
 
         await Otps.create(OTP_Schema);
 
-        mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก :  ${OTP_Schema.otp}`)
+        // mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก :  ${OTP_Schema.otp}`)
 
         res.status(200).json({result: 'OK', message: 'success create account please verify account by email in 15 minutes', data: userSchema});
     } catch (e) {
@@ -103,7 +103,7 @@ exports.verify = async (req,res) => {
 
             await Otps.findOneAndUpdate({email: user_data.email}, OTP_Schema);
 
-            mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
+            // mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
             return res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
         }
 
@@ -165,7 +165,7 @@ exports.verifyResendCode = async (req,res) => {
 
         await Otps.findOneAndUpdate({email: user_data.email}, OTP_Schema);
 
-        mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
+        // mailer(user_data.email,'Verify your account',`คุณ, ${user_data.name.firstname} ${user_data.name.lastname} <br><br>username : ${user_data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
         res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
 
     } catch (e) {
@@ -216,7 +216,7 @@ exports.login = async (req,res) => {
 
                     await Otps.findOneAndUpdate({email: data.email}, OTP_Schema);
 
-                    mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
+                    // mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
                     return res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
                 }
                 else if (data.state === 'ban') return res.status(200).json({ result: 'nOK', message: 'banned account', data: userSchema});
