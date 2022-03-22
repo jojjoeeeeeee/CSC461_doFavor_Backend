@@ -217,9 +217,9 @@ exports.login = async (req,res) => {
                     await Otps.findOneAndUpdate({email: data.email}, OTP_Schema);
 
                     // mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
-                    return res.status(200).json({ result: 'nOK', message: 'please verify account by email in 15 minutes', data: userSchema})
+                    return res.status(200).json({ result: 'OK', message: 'please verify account by email in 15 minutes', data: userSchema})
                 }
-                else if (data.state === 'ban') return res.status(200).json({ result: 'nOK', message: 'banned account', data: userSchema});
+                else if (data.state === 'ban') return res.status(200).json({ result: 'OK', message: 'banned account', data: userSchema});
 
                 if (device_id !== data.device_id) {
                     data.device_id = device_id
