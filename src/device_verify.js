@@ -7,12 +7,12 @@ module.exports = {
         const deviceId = req.deviceId;
 
         const data = await Users.findById(userId);
-        if(!data) return res.status(404).json({result: 'Not found', message: ''});
+        if(!data) return res.status(404).json({result: 'Not found', message: 'User not found', data: {}});
 
         if(data.device_id !== deviceId) {
             return res
             .status(401)
-            .json({ auth: false, message: 'session expired' });
+            .json({ reslt: 'nOK', message: 'session expired', data: {}});
         }
         next();
     }

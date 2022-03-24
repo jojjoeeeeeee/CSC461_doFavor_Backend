@@ -26,7 +26,7 @@ module.exports = {
     if (!token)
       return res
         .status(403)
-        .json({ result: 'nOK', message: 'No token provided.' , data: {}});
+        .json({ result: 'Not found', message: 'No token provided.' , data: {}});
 
     var verifyOptions = {
       issuer: i,
@@ -40,9 +40,9 @@ module.exports = {
         if (err.name == 'TokenExpiredError') {
           return res
             .status(401)
-            .json({ result: 'nOK', message: 'token expired' , data: {}});
+            .json({ result: 'nOK', message: 'Token expired' , data: {}});
         } else {
-          return res.status(500).json({ result: 'nOK', message: err , data: {}});
+          return res.status(500).json({ result: 'Internal Server Error', message: err , data: {}});
         }
       }
 
