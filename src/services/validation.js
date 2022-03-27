@@ -56,6 +56,45 @@ const verifyValidation = data => {
         return schema.validate(data);
 };
 
+const transactionValidation = data => {
+        const schema = Joi.object({
+                title: Joi.string()
+                        .required(),
+                detail: Joi.string()
+                        .required(),
+                type: Joi.string()
+                        .required(),
+                reward: Joi.string()
+                        .allow('')
+                        .required(),
+                petitioner_id: Joi.string()
+                        .required(),
+                applicant_id: Joi.string()
+                        .allow('')
+                        .required(),
+                conversation_id: Joi.string()
+                        .allow('')
+                        .required(),
+                location: {
+                room: Joi.string()
+                        .required(),
+                floor: Joi.string()
+                        .required(),
+                building: Joi.string()
+                        .required(),
+                optional: Joi.string()
+                        .allow('')
+                        .required(),
+                latitude: Joi.number()
+                        .required(),
+                longitude: Joi.number()
+                        .required()
+                }
+        });
+        return schema.validate(data);
+}
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.verifyValidation = verifyValidation;
+module.exports.transactionValidation = transactionValidation;

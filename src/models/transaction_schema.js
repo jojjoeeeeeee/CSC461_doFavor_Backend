@@ -5,9 +5,11 @@ const location_schema = mongoose.Schema({
     floor: String,
     building: String,
     optional: String,
-    latitude: String,
-    longitude: String
+    latitude: Number,
+    longitude: Number
 }, { _id : false});
+
+//status -> (pending,accept,cancel,success)
 
 const schema = mongoose.Schema({
     title: String,
@@ -18,7 +20,7 @@ const schema = mongoose.Schema({
     applicant_id: String,
     conversation_id: String,
     status: String,
-    localtion: location_schema,
+    location: location_schema,
     created: { type: Date, default: Date.now }
 });
 

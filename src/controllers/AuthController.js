@@ -180,10 +180,10 @@ exports.login = async (req,res) => {
     try {
         const { username, password, device_id } = req.body;
 
-        const data = await Users.findOne(({$or: [
+        const data = await Users.findOne({$or: [
             {username: username},
             {email: username}
-        ]}));
+        ]});
       
         if (data) {
             const isPasswordValid = await bcrypt.compare(password, data.password);

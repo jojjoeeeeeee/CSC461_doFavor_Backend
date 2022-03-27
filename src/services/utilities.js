@@ -1,5 +1,43 @@
 const generator = require('generate-password');
-const nodemailer = require("nodemailer");
+const nodemailer = require('nodemailer');
+
+const NodeCache = require('node-cache')
+const Landmarks = require('../models/landmark_schema')
+const Types = require('../models/type_schema')
+
+const locationCache = new NodeCache({ stdTTL: 604800 }) //7วัน
+
+const getLocation = async () => {
+
+    if (locationCache.has('location')) {
+        return locationCache.get('location')
+    }
+
+    try {
+        const data = await Landmarks.find()
+        locationCache.set('location', data)
+        return data
+    } catch (e) {
+        return '500'
+    }
+
+}
+
+const getTypes = async () => {
+
+    if (locationCache.has('category')) {
+        return locationCache.get('category')
+    }
+
+    try {
+        const data = await Types.find()
+        locationCache.set('category', data)
+        return data
+    } catch (e) {
+        return '500'
+    }
+
+}
 
 const generateOtpcode = () => {
     return generator.generate({
@@ -37,3 +75,6 @@ const mailer = (to,subject,html) => {
 
 exports.generateOtpcode = generateOtpcode;
 exports.mailer = mailer;
+
+exports.getLocation = getLocation;
+exports.getTypes = getTypes;
