@@ -414,7 +414,6 @@ exports.applicantCancel = async (req,res) => {
             conversation_id: newData.conversation_id,
             status: newData.status,
             location: newData.location,
-            isAccepted: isAccepted,
             created: moment(newData.created)
         }
 
@@ -451,4 +450,62 @@ exports.report = async (req,res) => {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
 
+}
+
+exports.success = async (req,res) => {
+    const userId = req.userId
+
+    const { error } = transactionStateChangeValidation(req.body);
+    if (error) return res.status(200).json({result: 'nOK', message: error.details[0].message, data: {}});
+
+    const { transaction_id } = req.body
+    
+    try {
+        const user_data = await Users.findById(userId);
+        if(!user_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
+
+        const data = await Transactions.findById(transaction_id)
+        if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
+
+        if(data.petitioner_id === userId || data.applicant_id !== userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
+
+        data.status = 'success'
+        const newData = await Transactions.findByIdAndUpdate(transaction_id, data)
+
+        const isAccepted = newData.applicant_id === '' ? false : true
+        
+        const schema = {
+            id: transaction_id,
+            title: newData.title,
+            detail: newData.detail,
+            type: newData.type,
+            reward: newData.reward,
+            petitioner: {
+                id: newData.petitioner_id,
+                firstname: '',
+                lastname: ''
+            },
+            applicant: {
+                id: newData.applicant_id,
+                firstname: user_data.name.firstname,
+                lastname: user_data.name.lastname
+            },
+            conversation_id: newData.conversation_id,
+            status: newData.status,
+            location: newData.location,
+            created: moment(newData.created)
+        }
+
+        if (isAccepted) {
+            const petitioner_data = await Users.findById(newData.petitioner_id);
+            if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
+
+            schema.petitioner.firstname = petitioner_data.name.firstname;
+            schema.petitioner.lastname = petitioner_data.name.lastname;
+        }
+
+        res.status(200).json({result: 'OK', message: 'success get transactions data', data: schema});
+    } catch (e) {
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
+    }
 }

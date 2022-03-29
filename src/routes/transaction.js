@@ -15,6 +15,7 @@ router.post('/get/all', jwt.verify, dvVerify.verify, TransactionController.getAl
 router.patch('/accept', jwt.verify, dvVerify.verify, TransactionController.accept);
 router.patch('/cancel/petitioner', jwt.verify, dvVerify.verify, TransactionController.petitionerCancel);
 router.patch('/cancel/applicant', jwt.verify, dvVerify.verify, TransactionController.applicantCancel);
+router.patch('/success', jwt.verify, dvVerify.verify, TransactionController.success);
 
 router.post('/history', jwt.verify, dvVerify.verify, TransactionController.getHistory);
 router.post('/report', jwt.verify, dvVerify.verify, TransactionController.report);
