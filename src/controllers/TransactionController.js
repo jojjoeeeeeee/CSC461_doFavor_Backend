@@ -222,6 +222,7 @@ exports.getHistory = async (req,res) => {
         for(let i = 0; i < data.length; i++) {
             if (data[i].petitioner_id === userId) {
                 const schema = {
+                    id: data[i]._id,
                     title: data[i].title,
                     detail: data[i].detail,
                     type: data[i].type,
