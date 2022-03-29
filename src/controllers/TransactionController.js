@@ -280,7 +280,7 @@ exports.accept = async (req,res) => {
         const data = await Transactions.findById(transaction_id)
         if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
-        if(data.petitioner_id === userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
+        if(data.petitioner_id === userId || data.status !== 'pending') return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
 
         data.status = 'accept'
         data.applicant_id = userId
@@ -312,7 +312,7 @@ exports.accept = async (req,res) => {
             created: moment(newData.created)
         }
 
-        res.status(200).json({result: 'OK', message: 'success get transactions history', data: schema});
+        res.status(200).json({result: 'OK', message: 'success accept transaction', data: schema});
         
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
@@ -358,7 +358,7 @@ exports.petitionerCancel = async (req,res) => {
                 lastname: ''
             },
             conversation_id: newData.conversation_id,
-            status: newData.status,
+            status: 'p_cancel',
             location: newData.location,
             created: moment(newData.created)
         }
@@ -371,7 +371,7 @@ exports.petitionerCancel = async (req,res) => {
             schema.applicant.lastname = applicant_data.name.lastname;
         }
 
-        res.status(200).json({result: 'OK', message: 'success get transactions data', data: schema});
+        res.status(200).json({result: 'OK', message: 'success cancel transaction', data: schema});
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
@@ -392,7 +392,7 @@ exports.applicantCancel = async (req,res) => {
         const data = await Transactions.findById(transaction_id)
         if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
-        if(data.petitioner_id === userId || data.applicant_id !== userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
+        if(data.petitioner_id === userId || data.applicant_id !== userId || data.status !== 'accept') return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
 
         data.status = 'a_cancel'
         const newData = await Transactions.findByIdAndUpdate(transaction_id, data)
@@ -416,7 +416,7 @@ exports.applicantCancel = async (req,res) => {
                 lastname: user_data.name.lastname
             },
             conversation_id: newData.conversation_id,
-            status: newData.status,
+            status: 'a_cancel',
             location: newData.location,
             created: moment(newData.created)
         }
@@ -429,7 +429,7 @@ exports.applicantCancel = async (req,res) => {
             schema.petitioner.lastname = petitioner_data.name.lastname;
         }
 
-        res.status(200).json({result: 'OK', message: 'success get transactions data', data: schema});
+        res.status(200).json({result: 'OK', message: 'success cancel transaction', data: schema});
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
@@ -471,7 +471,7 @@ exports.success = async (req,res) => {
         const data = await Transactions.findById(transaction_id)
         if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
-        if(data.petitioner_id === userId || data.applicant_id !== userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
+        if(data.petitioner_id === userId || data.applicant_id !== userId || data.status !== 'accept') return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
 
         data.status = 'success'
         const newData = await Transactions.findByIdAndUpdate(transaction_id, data)
@@ -508,7 +508,7 @@ exports.success = async (req,res) => {
             schema.petitioner.lastname = petitioner_data.name.lastname;
         }
 
-        res.status(200).json({result: 'OK', message: 'success get transactions data', data: schema});
+        res.status(200).json({result: 'OK', message: 'success transaction', data: schema});
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
