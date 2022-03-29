@@ -9,7 +9,7 @@ const location_schema = mongoose.Schema({
     longitude: Number
 }, { _id : false});
 
-//status -> (pending,accept,cancel,success)
+//status -> (pending,accept,p_cancel,a_cancel,success)
 
 const schema = mongoose.Schema({
     title: String,
@@ -24,4 +24,4 @@ const schema = mongoose.Schema({
     created: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('transcations', schema)
+module.exports = mongoose.model('transactions', schema)

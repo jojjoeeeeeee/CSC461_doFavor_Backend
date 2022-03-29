@@ -3,12 +3,13 @@ const router = express.Router();
 const jwt = require('../jwt');
 const dvVerify = require('../device_verify');
 
-const TransactionController = require('../controllers/TranscationController');
+const TransactionController = require('../controllers/TransactionController');
 
 router.get('/data', jwt.verify, dvVerify.verify, TransactionController.getFormData);
 
 router.post('/create', jwt.verify, dvVerify.verify, TransactionController.create);
-router.post('/get', jwt.verify, dvVerify.verify, TransactionController.get);
+router.post('/get/petitioner', jwt.verify, dvVerify.verify, TransactionController.petitionerGet);
+router.post('/get/applicant', jwt.verify, dvVerify.verify, TransactionController.applicantGet)
 router.post('/get/all', jwt.verify, dvVerify.verify, TransactionController.getAll);
 
 router.patch('/accept', jwt.verify, dvVerify.verify, TransactionController.accept);
@@ -16,5 +17,6 @@ router.patch('/cancel/petitioner', jwt.verify, dvVerify.verify, TransactionContr
 router.patch('/cancel/applicant', jwt.verify, dvVerify.verify, TransactionController.applicantCancel);
 
 router.post('/history', jwt.verify, dvVerify.verify, TransactionController.getHistory);
+router.post('/report', jwt.verify, dvVerify.verify, TransactionController.report);
 
 module.exports = router;

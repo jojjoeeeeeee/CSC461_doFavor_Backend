@@ -7,5 +7,5 @@ const schema = mongoose.Schema({
     longitude: Number
 });
 
-schema.index({ name: 1}, { unique: true });
+schema.index({ building: 2}, { unique: true });
 module.exports = mongoose.model('landmarks', schema)
