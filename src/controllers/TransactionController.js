@@ -169,7 +169,10 @@ exports.getAll = async (req,res) => {
         const user_data = await Users.findById(userId);
         if(!user_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
-        const data = await Transactions.find({ status: 'pending' })
+        const data = await Transactions.find({$and: [
+            { status: 'pending' },
+            { petitioner_id: {$ne:userId}}
+        ]})
         if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
 
         const transactions_data = []
