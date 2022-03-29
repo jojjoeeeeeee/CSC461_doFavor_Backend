@@ -9,6 +9,7 @@ const moment = require('moment');
 const { generateOtpcode, mailer } = require('../services/utilities');
 
 const { loginValidation, registerValidation, verifyValidation } = require('../services/validation');
+const { schema } = require('../models/user_schema');
 
 const gswu_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@g.swu.ac.th$/
 
@@ -222,13 +223,14 @@ exports.login = async (req,res) => {
                 else if (data.state === 'ban') return res.status(200).json({ result: 'OK', message: 'banned account', data: userSchema});
 
                 if (device_id !== data.device_id) {
+                    userSchema.device_id = device_id
                     data.device_id = device_id
                     await Users.findByIdAndUpdate(data._id, data);
                 }
 
                 const payload = {
                     id: data._id,
-                    device_id: data.device_id
+                    device_id: device_id
                 };
 
                 const token = jwt.sign(payload);
