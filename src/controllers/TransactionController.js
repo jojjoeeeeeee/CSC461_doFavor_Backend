@@ -63,6 +63,8 @@ exports.petitionerGet = async (req,res) => {
 
         const data = await Transactions.findById(transaction_id)
         if(!data) return res.status(404).json({result: 'Not found', message: '', data: {}});
+        
+        if(data.petitioner_id !== userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
 
         const isAccepted = data.applicant_id === '' ? false : true
         
