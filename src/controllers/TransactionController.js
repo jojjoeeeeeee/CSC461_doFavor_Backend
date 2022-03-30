@@ -308,7 +308,7 @@ exports.accept = async (req,res) => {
                 lastname: user_data.name.lastname
             },
             conversation_id: newData.conversation_id,
-            status: newData.status,
+            status: 'accept',
             location: newData.location,
             isAccepted: true,
             created: moment(newData.created)
