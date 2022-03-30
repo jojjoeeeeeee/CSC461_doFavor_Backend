@@ -122,6 +122,9 @@ exports.applicantGet = async (req,res) => {
         if(data.petitioner_id === userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
 
         const isAccepted = data.applicant_id === '' ? false : true
+
+        const petitioner_data = await Users.findById(data.petitioner_id);
+        if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
         
         const schema = {
             id: transaction_id,
@@ -131,13 +134,13 @@ exports.applicantGet = async (req,res) => {
             reward: data.reward,
             petitioner: {
                 id: data.petitioner_id,
-                firstname: '',
-                lastname: ''
+                firstname: petitioner_data.name.firstname,
+                lastname: petitioner_data.name.lastname
             },
             applicant: {
                 id: data.applicant_id,
-                firstname: user_data.name.firstname,
-                lastname: user_data.name.lastname
+                firstname: '',
+                lastname: ''
             },
             conversation_id: data.conversation_id,
             status: data.status,
@@ -148,11 +151,8 @@ exports.applicantGet = async (req,res) => {
 
         if (isAccepted) {
             if (data.applicant_id !== userId) return res.status(403).json({result: 'Forbiden', message: 'access is denied', data: {}});
-            const petitioner_data = await Users.findById(data.petitioner_id);
-            if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
-
-            schema.petitioner.firstname = petitioner_data.name.firstname;
-            schema.petitioner.lastname = petitioner_data.name.lastname;
+            schema.applicant.firstname = user_data.name.firstname
+            schema.applicant.lastname = user_data.name.lastname
         }
 
         res.status(200).json({result: 'OK', message: 'success get transactions data', data: schema});
@@ -397,7 +397,8 @@ exports.applicantCancel = async (req,res) => {
         data.status = 'a_cancel'
         const newData = await Transactions.findByIdAndUpdate(transaction_id, data)
 
-        const isAccepted = newData.applicant_id === '' ? false : true
+        const petitioner_data = await Users.findById(newData.petitioner_id);
+        if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
         
         const schema = {
             id: transaction_id,
@@ -407,8 +408,8 @@ exports.applicantCancel = async (req,res) => {
             reward: newData.reward,
             petitioner: {
                 id: newData.petitioner_id,
-                firstname: '',
-                lastname: ''
+                firstname: petitioner_data.name.firstname,
+                lastname: petitioner_data.name.lastname
             },
             applicant: {
                 id: newData.applicant_id,
@@ -419,14 +420,6 @@ exports.applicantCancel = async (req,res) => {
             status: 'a_cancel',
             location: newData.location,
             created: moment(newData.created)
-        }
-
-        if (isAccepted) {
-            const petitioner_data = await Users.findById(newData.petitioner_id);
-            if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
-
-            schema.petitioner.firstname = petitioner_data.name.firstname;
-            schema.petitioner.lastname = petitioner_data.name.lastname;
         }
 
         res.status(200).json({result: 'OK', message: 'success cancel transaction', data: schema});
@@ -476,7 +469,8 @@ exports.success = async (req,res) => {
         data.status = 'success'
         const newData = await Transactions.findByIdAndUpdate(transaction_id, data)
 
-        const isAccepted = newData.applicant_id === '' ? false : true
+        const petitioner_data = await Users.findById(newData.petitioner_id);
+        if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
         
         const schema = {
             id: transaction_id,
@@ -486,8 +480,8 @@ exports.success = async (req,res) => {
             reward: newData.reward,
             petitioner: {
                 id: newData.petitioner_id,
-                firstname: '',
-                lastname: ''
+                firstname: petitioner_data.name.firstname,
+                lastname: petitioner_data.name.lastname
             },
             applicant: {
                 id: newData.applicant_id,
@@ -495,17 +489,9 @@ exports.success = async (req,res) => {
                 lastname: user_data.name.lastname
             },
             conversation_id: newData.conversation_id,
-            status: newData.status,
+            status: 'success',
             location: newData.location,
             created: moment(newData.created)
-        }
-
-        if (isAccepted) {
-            const petitioner_data = await Users.findById(newData.petitioner_id);
-            if(!petitioner_data) return res.status(404).json({result: 'Not found', message: '', data: {}});
-
-            schema.petitioner.firstname = petitioner_data.name.firstname;
-            schema.petitioner.lastname = petitioner_data.name.lastname;
         }
 
         res.status(200).json({result: 'OK', message: 'success transaction', data: schema});
