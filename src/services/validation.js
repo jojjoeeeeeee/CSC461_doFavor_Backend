@@ -89,7 +89,17 @@ const transactionValidation = data => {
                         .required(),
                 longitude: Joi.number()
                         .required()
-                }
+                },
+                task_location: {
+                name: Joi.string()
+                        .required(),
+                building: Joi.string()
+                        .required(),
+                latitude: Joi.number()
+                        .required(),
+                longitude: Joi.number()
+                        .required()
+                }        
         });
         return schema.validate(data);
 }
