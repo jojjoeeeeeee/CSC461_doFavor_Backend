@@ -11,7 +11,7 @@ module.exports = {
         if(data.device_id !== deviceId) {
             return res
             .status(401)
-            .json({ reslt: 'nOK', message: 'session expired', data: {}});
+            .json({ result: 'nOK', message: 'session expired', data: {}});
         }
         next();
     }
