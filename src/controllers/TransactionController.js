@@ -87,6 +87,7 @@ exports.petitionerGet = async (req,res) => {
             conversation_id: data.conversation_id,
             status: data.status,
             location: data.location,
+            task_location: data.task_location,
             isAccepted: isAccepted,
             created: moment(data.created)
         }
@@ -147,6 +148,7 @@ exports.applicantGet = async (req,res) => {
             conversation_id: data.conversation_id,
             status: data.status,
             location: data.location,
+            task_location: data.task_location,
             isAccepted: isAccepted,
             created: moment(data.created)
         }
@@ -191,6 +193,7 @@ exports.getAll = async (req,res) => {
                 conversation_id: data[i].conversation_id,
                 status: data[i].status,
                 location: data[i].location,
+                task_location: data[i].task_location,
                 created: moment(data[i].created)
             }
             transactions_data.push(schema)
@@ -234,6 +237,7 @@ exports.getHistory = async (req,res) => {
                     conversation_id: data[i].conversation_id,
                     status: data[i].status,
                     location: data[i].location,
+                    task_location: data[i].task_location,
                     role: "ฝากซื้อ",
                     created: moment(data[i].created)
                 }
@@ -250,6 +254,7 @@ exports.getHistory = async (req,res) => {
                     conversation_id: data[i].conversation_id,
                     status: data[i].status,
                     location: data[i].location,
+                    task_location: data[i].task_location,
                     role: "รับฝาก",
                     created: moment(data[i].created)
                 }
@@ -310,6 +315,7 @@ exports.accept = async (req,res) => {
             conversation_id: newData.conversation_id,
             status: 'accept',
             location: newData.location,
+            task_location: newData.task_location,
             isAccepted: true,
             created: moment(newData.created)
         }
@@ -362,6 +368,7 @@ exports.petitionerCancel = async (req,res) => {
             conversation_id: newData.conversation_id,
             status: 'p_cancel',
             location: newData.location,
+            task_location: newData.task_location,
             created: moment(newData.created)
         }
 
@@ -421,6 +428,7 @@ exports.applicantCancel = async (req,res) => {
             conversation_id: newData.conversation_id,
             status: 'a_cancel',
             location: newData.location,
+            task_location: newData.task_location,
             created: moment(newData.created)
         }
 
@@ -493,6 +501,7 @@ exports.success = async (req,res) => {
             conversation_id: newData.conversation_id,
             status: 'success',
             location: newData.location,
+            task_location: newData.task_location,
             created: moment(newData.created)
         }
 
