@@ -194,12 +194,13 @@ exports.getAll = async (req,res) => {
                 status: data[i].status,
                 location: data[i].location,
                 task_location: data[i].task_location,
-                created: moment(data[i].created)
+                moment: moment(data[i].created),
+                created: data[i].created
             }
             transactions_data.push(schema)
         }
 
-        const sorted_data = transactions_data.sort((a, b) => a.created.valueOf() - b.created.valueOf())
+        const sorted_data = transactions_data.sort((a, b) => a.moment.valueOf() - b.moment.valueOf())
 
         res.status(200).json({result: 'OK', message: 'success get all transactions', data: {transactons: sorted_data}});
         
@@ -256,13 +257,14 @@ exports.getHistory = async (req,res) => {
                     location: data[i].location,
                     task_location: data[i].task_location,
                     role: "รับฝาก",
-                    created: moment(data[i].created)
+                    moment: moment(data[i].created),
+                    created: data[i].created
                 }
                 transactions_data.push(schema)
             }
         }
 
-        const sorted_data = transactions_data.sort((a, b) => a.created.valueOf() - b.created.valueOf())
+        const sorted_data = transactions_data.sort((a, b) => a.moment.valueOf() - b.moment.valueOf())
 
         res.status(200).json({result: 'OK', message: 'success get transactions history', data: {history: sorted_data}});
         
