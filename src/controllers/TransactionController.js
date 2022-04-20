@@ -89,7 +89,7 @@ exports.petitionerGet = async (req,res) => {
             location: data.location,
             task_location: data.task_location,
             isAccepted: isAccepted,
-            created: moment(data.created)
+            created: data.created
         }
 
         if (isAccepted) {
@@ -150,7 +150,7 @@ exports.applicantGet = async (req,res) => {
             location: data.location,
             task_location: data.task_location,
             isAccepted: isAccepted,
-            created: moment(data.created)
+            created: data.created
         }
 
         if (isAccepted) {
@@ -240,7 +240,8 @@ exports.getHistory = async (req,res) => {
                     location: data[i].location,
                     task_location: data[i].task_location,
                     role: "ฝากซื้อ",
-                    created: moment(data[i].created)
+                    moment: moment(data[i].created),
+                    created: data[i].created
                 }
                 transactions_data.push(schema)
             } else {
@@ -319,7 +320,7 @@ exports.accept = async (req,res) => {
             location: newData.location,
             task_location: newData.task_location,
             isAccepted: true,
-            created: moment(newData.created)
+            created: newData.created
         }
 
         res.status(200).json({result: 'OK', message: 'success accept transaction', data: schema});
@@ -371,7 +372,7 @@ exports.petitionerCancel = async (req,res) => {
             status: 'p_cancel',
             location: newData.location,
             task_location: newData.task_location,
-            created: moment(newData.created)
+            created: newData.created
         }
 
         if (isAccepted) {
@@ -431,7 +432,7 @@ exports.applicantCancel = async (req,res) => {
             status: 'a_cancel',
             location: newData.location,
             task_location: newData.task_location,
-            created: moment(newData.created)
+            created: newData.created
         }
 
         res.status(200).json({result: 'OK', message: 'success cancel transaction', data: schema});
@@ -504,7 +505,7 @@ exports.success = async (req,res) => {
             status: 'success',
             location: newData.location,
             task_location: newData.task_location,
-            created: moment(newData.created)
+            created: newData.created
         }
 
         res.status(200).json({result: 'OK', message: 'success transaction', data: schema});
