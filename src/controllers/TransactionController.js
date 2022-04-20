@@ -202,7 +202,7 @@ exports.getAll = async (req,res) => {
 
         const sorted_data = transactions_data.sort((a, b) => a.moment.valueOf() - b.moment.valueOf())
 
-        res.status(200).json({result: 'OK', message: 'success get all transactions', data: {transactons: sorted_data}});
+        res.status(200).json({result: 'OK', message: 'success get all transactions', data: {transactons: sorted_data.reverse()}});
         
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
@@ -267,7 +267,7 @@ exports.getHistory = async (req,res) => {
 
         const sorted_data = transactions_data.sort((a, b) => a.moment.valueOf() - b.moment.valueOf())
 
-        res.status(200).json({result: 'OK', message: 'success get transactions history', data: {history: sorted_data}});
+        res.status(200).json({result: 'OK', message: 'success get transactions history', data: {history: sorted_data.reverse()}});
         
     } catch (e) {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
