@@ -1,6 +1,8 @@
 const multer = require('multer');
 const Files = require('../models/file_schema');
-const cloudinary = require('cloudinary');
+
+const cloudinary = require('../services/cloudinary')
+
 const fs = require('fs');
 
 const currentTime = Date.now();
@@ -23,14 +25,13 @@ const storageImg = multer.diskStorage({
     }
 });
 
-const storageChatImg = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, './uploads')
-    },
-    filename: (req, file, cb) => {
-        cb(null, currentTime + '-' + file.originalname)
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true)
+    } else {
+        cb({message: 'Unsupported file format'}, false)
     }
-});
+}
 
 
 
@@ -116,47 +117,35 @@ exports.download = async (req,res) => {
     }
 };
 
-cloudinary.config({
-    cloudname: "dryj3c26m",
-    api_key: "974695179477183",
-    api_secret: "nvPAdDRwhTenVrtmhtn2bHbZx84"
-})
-
-const cloudinaryUpload = (file,folder) => {
-    return new Promise(resolve => {
-        cloudinary.uploader.upload(file, result => {
-            resolve({
-                url: result.url,
-                id: result.public_id
-            })
-        }, {
-            resouce_type: "auto",
-            folder: folder
-        })
-    })
-}
 
 exports.uploadChatImage = async (req,res) => {
     const user_id = req.userId
+
+    const upload = multer({
+        storage: storageImg,
+        limits: {fileSize: 1024 * 1024 },
+        fileFilter: fileFilter
+    }).array('file');
     
     try {
-        const uploader = async (path) => await cloudinaryUpload(path, 'Images')
 
-        const uploadImg = multer({
-            storage: storageChatImg,
-            limits: {fileSize: 1024 * 1024 }
-        }).array('file');
-    
-        const urls = []
-        const files = req.files;
-        for (const file of files) {
-            const { path } = file;
-            const newPath = await uploader(path)
-            urls.push(newPath)
-            fs.unlinkSync(path)
-        }
+        upload( req, res, async (err) => {
+            if (err) {
+                return res.status(500).json({result: 'Internal Server Error', message: err, data: {}});
+            }
+
+            const uploader = async (path) => await cloudinary.uploads(path, 'Images')
+            const urls = []
+            const files = req.files;
+            for (const file of files) {
+                const { path } = file;
+                const newPath = await uploader(path)
+                urls.push(newPath.url)
+                fs.unlinkSync(path)
+            }
+            return res.status(200).json({result: 'OK', message: 'success upload conversation image', data: {url : urls}})
+        });
         
-        return res.status(200).json({result: 'OK', message: 'success upload conversation image', data: {url : urls}})
     } catch {
         res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
     }
