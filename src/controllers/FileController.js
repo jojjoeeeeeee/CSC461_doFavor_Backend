@@ -148,7 +148,7 @@ exports.uploadChatImage = async (req,res) => {
         }).array('file');
     
         const urls = []
-        const files = req. files;
+        const files = req.files;
         for (const file of files) {
             const { path } = file;
             const newPath = await uploader(path)
