@@ -131,7 +131,7 @@ exports.uploadChatImage = async (req,res) => {
 
         upload( req, res, async (err) => {
             if (err) {
-                return res.status(500).json({result: 'Internal Server Error', message: err, data: {}});
+                return res.status(500).json({result: 'Internal Server Error', message: `${err.message}`, data: {}});
             }
 
             const uploader = async (path) => await cloudinary.uploads(path, 'Images')
