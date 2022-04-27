@@ -1,5 +1,13 @@
 const multer = require('multer');
 const Files = require('../models/file_schema');
+const cloudinary = require('cloudinary');
+const fs = require('fs');
+
+cloudinary.config({
+    cloudname: "",
+    api_key: "",
+    api_secret: ""
+})
 
 const currentTime = Date.now();
 
@@ -15,6 +23,15 @@ const storage = multer.diskStorage({
 const storageImg = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'public/img/')
+    },
+    filename: (req, file, cb) => {
+        cb(null, currentTime + '-' + file.originalname)
+    }
+});
+
+const storageChatImg = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './uploads')
     },
     filename: (req, file, cb) => {
         cb(null, currentTime + '-' + file.originalname)
@@ -104,3 +121,43 @@ exports.download = async (req,res) => {
         res.status(500).json({result: 'Internal Server Error', message: ''});
     }
 };
+
+const cloudinaryUpload = (file,folder) => {
+    return new Promise(resolve => {
+        cloudinary.uploader.upload(file, result => {
+            resolve({
+                url: result.url,
+                id: result.public_id
+            })
+        }, {
+            resouce_type: "auto",
+            folder: folder
+        })
+    })
+}
+
+exports.uploadChatImage = async (req,res) => {
+    const user_id = req.userId
+    
+    try {
+        const uploader = async (path) => await cloudinaryUpload(path, 'Images')
+
+        const uploadImg = multer({
+            storage: storageChatImg,
+            limits: {fileSize: 1024 * 1024 }
+        }).array('file');
+    
+        const urls = []
+        const files = req. files;
+        for (const file of files) {
+            const { path } = file;
+            const newPath = await uploader(path)
+            urls.push(newPath)
+            fs.unlinkSync(path)
+        }
+        
+        return res.status(200).json({result: 'OK', message: 'success upload conversation image', data: {url : urls}})
+    } catch {
+        res.status(500).json({result: 'Internal Server Error', message: '', data: {}});
+    }
+}
