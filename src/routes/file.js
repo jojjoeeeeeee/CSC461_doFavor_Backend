@@ -8,6 +8,7 @@ const FileController = require('../controllers/FileController');
 
 router.post('/upload', jwt.verify, dvVerify.verify ,FileController.upload);
 router.post('/upload/img', jwt.verify, dvVerify.verify ,FileController.uploadImage);
+router.post('/upload/img/conversation', jwt.verify, dvVerify.verify ,FileController.uploadChatImage);
 
 router.get('/download/:file_id', FileController.download);
 

@@ -3,12 +3,6 @@ const Files = require('../models/file_schema');
 const cloudinary = require('cloudinary');
 const fs = require('fs');
 
-cloudinary.config({
-    cloudname: "",
-    api_key: "",
-    api_secret: ""
-})
-
 const currentTime = Date.now();
 
 const storage = multer.diskStorage({
@@ -121,6 +115,12 @@ exports.download = async (req,res) => {
         res.status(500).json({result: 'Internal Server Error', message: ''});
     }
 };
+
+cloudinary.config({
+    cloudname: "dryj3c26m",
+    api_key: "974695179477183",
+    api_secret: "nvPAdDRwhTenVrtmhtn2bHbZx84"
+})
 
 const cloudinaryUpload = (file,folder) => {
     return new Promise(resolve => {
