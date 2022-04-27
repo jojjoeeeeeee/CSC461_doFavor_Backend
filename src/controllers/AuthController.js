@@ -215,7 +215,10 @@ exports.login = async (req,res) => {
                         expired: futureDate,
                     }
 
-                    await Otps.findOneAndUpdate({email: data.email}, OTP_Schema);
+                    const hasOtp = await Otps.findOneAndUpdate({email: data.email}, OTP_Schema);
+                    if (!hasOtp) {
+                        await Otps.create(OTP_Schema);
+                    }
 
                     // mailer(data.email,'Verify your account',`คุณ, ${data.name.firstname} ${data.name.lastname} <br><br>username : ${data.username} <br><br>รหัสยืนยันการสมัครสมาชิก : ${OTP_Schema.otp}`)
                     return res.status(200).json({ result: 'OK', message: 'please verify account by email in 15 minutes', data: userSchema})
