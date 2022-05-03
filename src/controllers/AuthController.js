@@ -9,7 +9,6 @@ const moment = require('moment');
 const { generateOtpcode, mailer } = require('../services/utilities');
 
 const { loginValidation, registerValidation, verifyValidation } = require('../services/validation');
-const { schema } = require('../models/user_schema');
 
 const gswu_regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@g.swu.ac.th$/
 

@@ -10,4 +10,5 @@ router.post('/register', AuthController.register);
 router.post('/verify', AuthController.verify);
 router.post('/verify/resend', AuthController.verifyResendCode);
 
+
 module.exports = router;

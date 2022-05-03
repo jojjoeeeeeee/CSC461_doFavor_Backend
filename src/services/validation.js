@@ -122,9 +122,20 @@ const transactionReportValidation = data => {
         return schema.validate(data);
 }
 
+const appReportValidation = data => {
+        const schema = Joi.object({
+                email: Joi.string()
+                        .required(),
+                detail: Joi.string()
+                        .required()
+        });
+        return schema.validate(data);
+}
+
 module.exports.registerValidation = registerValidation;
 module.exports.loginValidation = loginValidation;
 module.exports.verifyValidation = verifyValidation;
 module.exports.transactionValidation = transactionValidation;
 module.exports.transactionStateChangeValidation = transactionStateChangeValidation;
 module.exports.transactionReportValidation = transactionReportValidation;
+module.exports.appReportValidation = appReportValidation;
